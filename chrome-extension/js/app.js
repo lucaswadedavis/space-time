@@ -11,17 +11,27 @@ var app={m:{},v:{},c:{},t:{}};
 /////////////////////////////
 
 app.c.init=function(){
+  /*
   if (simpleStorage.get("replacements") === undefined){
     simpleStorage.set("replacements",[]);
   }
-  app.v.init();
-	app.v.listeners();
+  */
+  chrome.storage.sync.get(null,function(obj){
+    if (!obj.replacements){
+      obj.replacements = [];
+      chrome.storage.sync.set({"replacements":[]},function(){
+        console.log("initial replacements set");
+      });
+    }
+  app.v.init(obj);
+  app.v.listeners();
+  });
 };
 
 //////////////////////////////
 
-app.v.init=function(){
-	$("body").html(app.t.splash() );
+app.v.init=function(state){
+	$("body").html(app.t.splash(state) );
 };
 
 
@@ -43,18 +53,18 @@ app.v.listeners=function(){
       }
     });
     
-    simpleStorage.set("replacements",s);
-
+   // simpleStorage.set("replacements",s);
+    chrome.storage.sync.set({replacements:s},function(){console.log("saved!");});
   });
 };
 
 //////////////////////////////
 
-app.t.splash=function(){
+app.t.splash=function(state){
   var d="";
   d+="<img src='icon.png' alt='counterspell icon' />";
   d+="<div class='wrapper'>";
-    d+=app.t.replacements(simpleStorage.get("replacements") );
+    d+=app.t.replacements(state.replacements );
   d+="<input type='button' value='Save' id='save'></input>";
   d+="</div>";    
   return d;

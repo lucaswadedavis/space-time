@@ -1,10 +1,17 @@
+chrome.storage.sync.get(null,function(obj){
+  if (!obj.replacements){
+    obj.replacements = [];
+    chrome.storage.sync.set(obj,function(){});
+  }
+  console.log(obj.replacements);
+  walk(document.body,obj.replacements);
+});
 
-walk(document.body);
 
 function walk(node,replacements){
 	// I stole the recursive dom walker function from here:
 	// http://is.gd/mwZp7E
-	
+
 	var child, next;
 
 	switch ( node.nodeType )  
@@ -16,7 +23,7 @@ function walk(node,replacements){
 			while ( child ) 
 			{
 				next = child.nextSibling;
-				walk(child);
+				walk(child,replacements);
 				child = next;
 			}
 			break;
@@ -30,10 +37,7 @@ function walk(node,replacements){
 
 function counterspell(textNode, replacements){
   var d = textNode.nodeValue;
-  replacements=[];
-   replacements.push({original:"President",replacement:"Assassin"});
- // replacements = simpleStorage.get("replacements") || [];
-  for (var i=0;i<replacements.length;i++){
+  for (var i in replacements){
     var pattern = new RegExp(("\\b"+replacements[i].original+"\\b"),"g");
     d = d.replace(pattern,replacements[i].replacement);
   }
