@@ -1,5 +1,5 @@
-# Counterspell
+# Space Time
 
-Counterspell is a little Chrome plugin that scans the sites you visit for language you'd rather not see, and warns you or replaces the text with something better.
+Space Time is a little Chrome Extension that converts timestamps to UTC and back again.
 
 License (MIT)

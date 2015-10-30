@@ -3,8 +3,8 @@
   "icons": { "16": "icon.png",
            "48": "icon.png",
           "128": "icon.png" },
-  "name": "Counterspell",
-  "description": "counters abusive language",
+  "name": "Space Time",
+  "description": "converts timestamps",
   "version": "1.0",
   "browser_action": {
     "default_icon": "icon.png",
@@ -12,13 +12,5 @@
   },
   "permissions":[
     "storage"
-    ],
-  "content_scripts": 
-    [
-    {
-      "matches": ["*://*/*"],
-      "js": ["js/simple-storage.js","js/replacements.js"],
-      "run_at": "document_end"
-    }
-  ]
+    ]
 }
