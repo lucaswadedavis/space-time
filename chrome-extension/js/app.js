@@ -35,31 +35,33 @@ app.c.save = function () {
       }
     });
     
-    chrome.storage.sync.set({replacements:s},function(){console.log("saved!");});
+    chrome.storage.sync.set({replacements:s},function(){
+        console.log('state saved');
+    });
+
+    if ($("#replacements").children().length <= s.length) {
+        $("#replacements").append(app.t.replacement());
+    }
 };
 
 //////////////////////////////
 
 app.v.init=function(state){
 	$("body").html(app.t.splash(state) );
+    setInterval(function () {
+        $("span#now-timestamp").text(moment.utc().format('X'));
+        $("span#now-utc").text(moment.utc().format('YYYY/MM/DD HH:mm:ss'));
+    }, 1000);
 };
 
 
 app.v.listeners=function(){
-  $("body").on("click","#add-another",function(){
-    $("#replacements").append(app.t.replacement() );
-  });
-
-  $("body").on("click","#save",function(){
-    app.c.save();
-  });
 
   $("body").on("keyup", "#replacements div .timestamp", function () {
         var timestamp = $(this)[0].value;
         var gmt = $(this).siblings('.gmt');
-        console.log(timestamp, gmt);
         if (timestamp && moment.unix(timestamp).isValid()) {
-            $(gmt).val(moment.unix(timestamp).utc().format('YYYY/MM/DD HH:mm'));
+            $(gmt).val(moment.unix(timestamp).utc().format('YYYY/MM/DD HH:mm:ss'));
         } else {
             $(gmt).val('');
         }
@@ -69,7 +71,6 @@ app.v.listeners=function(){
  $("body").on("keyup", "#replacements div .gmt", function () {
         var gmt = $(this)[0].value;
         var timestamp = $(this).siblings('.timestamp');
-        console.log(gmt, timestamp);
         if (gmt && moment.utc(gmt).isValid()) {
             $(timestamp).val(moment.utc(gmt).format('X'));
         } else {
@@ -78,15 +79,13 @@ app.v.listeners=function(){
         app.c.save();
   });
 
-
-
 };
 
 //////////////////////////////
 
 app.t.splash=function(state){
   var d="";
-  d+="<h2>Muthafuckin Space Time</h2>";
+  d+="<h2><span id='now-timestamp'>"+moment.utc().format('X')+"</span> <span id='now-utc'>"+moment.utc().format('YYYY/MM/DD HH:mm:ss')+"</span></h2>";
   d+="<div class='wrapper'>";
     d+=app.t.replacements(state.replacements );
   d+="</div>";    
@@ -96,11 +95,10 @@ app.t.splash=function(state){
 app.t.replacements = function(replacements){
   var d = "";
   d += "<div class='thin-wrapper' id='replacements'>";
-    for (var i=0;i<replacements.length;i++){
+    for (var i=0;i<replacements.length+1;i++){
       d += app.t.replacement(replacements[i]);
     }
   d += "</div>";
-  d += "<input type='button' value='add another' id='add-another'></input>";
   return d;
 };
 
